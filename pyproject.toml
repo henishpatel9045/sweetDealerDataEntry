@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "sweetdealernew"
+version = "0.1.0"
+description = ""
+authors = ["Henish Patel <200120107182@git.org.in>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.6"
+djangorestframework = "^3.14.0"
+xlsxwriter = "^3.1.8"
+django-debug-toolbar = "^4.2.0"
+django-admin-shortcuts = "^2.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

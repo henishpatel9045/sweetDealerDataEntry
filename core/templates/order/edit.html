@@ -1,0 +1,120 @@
+{% extends "order/base.html" %} {% block content %}
+<div class="container mt-4">
+  <h1>Edit Order #{{ order.bill_number }}</h1>
+  <div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  <form method="post" id="order-form">
+    {% csrf_token %}
+    <div class="row">
+      <input type="hidden" name="dealer" value="{{order.dealer.pk}}" />
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="customer_name">Bill No.</label>
+          <input
+            type="text"
+            name="bill_number"
+            class="form-control"
+            readonly
+            value="{{order.bill_number}}"
+          />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="order_date">Order Date</label>
+
+          {{form.date}}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="customer_name">Customer Name</label>
+          {{form.customer_name}}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="customer_name">Total Amount</label>
+          <input
+            type="text"
+            name="total_amount"
+            class="form-control"
+            readonly
+            value="{{order.total_amount}}"
+          />
+        </div>
+      </div>
+    </div>
+
+    <hr />
+    <table class="table table-striped" style="border: 2px solid gray">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>500 GM</th>
+          <th>1 KG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>કાજુ કાત્રી</th>
+          <td>{{form.kaju_katri_500}}</td>
+          <td>{{form.kaju_katri_1000}}</td>
+        </tr>
+        <tr>
+          <th>મગજ</th>
+          <td>{{form.magaj_500}}</td>
+          <td>{{form.magaj_1000}}</td>
+        </tr>
+        <tr>
+          <th>પ્રિમયમ મોહનથાળ</th>
+          <td>{{form.premium_mohanthal_500}}</td>
+          <td>{{form.premium_mohanthal_1000}}</td>
+        </tr>
+        <tr>
+          <th>સ્પે. ટોપરાપાક</th>
+          <td>{{form.special_toparapak_500}}</td>
+          <td>{{form.special_toparapak_1000}}</td>
+        </tr>
+        <tr>
+          <th>બરફી</th>
+          <td>{{form.barfi_500}}</td>
+          <td>{{form.barfi_1000}}</td>
+        </tr>
+        <tr>
+          <th>માવા મિક્ષ મીઠાઈ</th>
+          <td>{{form.mava_mix_mithai_500}}</td>
+          <td>{{form.mava_mix_mithai_1000}}</td>
+        </tr>
+        <tr>
+          <th>ડ્રાય ફ્રુટ બીસ્કીટ</th>
+          <td>{{form.dry_fruite_biscuite_500}}</td>
+          <td>{{form.dry_fruite_biscuite_1000}}</td>
+        </tr>
+        <tr>
+          <th>સુરતી ચવાણું</th>
+          <td>{{form.surti_chavanu_500}}</td>
+          <td>{{form.surti_chavanu_1000}}</td>
+        </tr>
+        <tr>
+          <th>સોન પાપડી</th>
+          <td>{{form.son_papdi_500}}</td>
+          <td></td>
+        </tr>
+        <!-- Add more rows for other items -->
+      </tbody>
+    </table>
+    <div class="w-100">
+      <button type="submit" class="btn btn-lg btn-primary" id="submit-order">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

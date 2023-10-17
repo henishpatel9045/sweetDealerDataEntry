@@ -1,0 +1,5 @@
+django 
+djangorestframework
+xlsxwriter
+django-admin-shortcuts
+django-debug-toolbar
