@@ -124,7 +124,8 @@ class Order(models.Model):
 
         quant = {i.name: i.current_quantity for i in initial_quantity}
         current_ordered_quantity = (
-            Order.objects.prefetch_related("dealer").exclude(pk=self.pk)
+            Order.objects.prefetch_related("dealer")
+            .exclude(pk=self.pk)
             .annotate(
                 kaju_katri=F("kaju_katri_500") * Decimal("0.5") + F("kaju_katri_1000"),
                 magaj=F("magaj_500") * Decimal("0.5") + F("magaj_1000"),
@@ -231,3 +232,8 @@ class Order(models.Model):
             self.check_quantity()
             self.total_amount = self.calculate_total()
             super().save()
+
+    class Meta:
+        ordering = [
+            "bill_number",
+        ]

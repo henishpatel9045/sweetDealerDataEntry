@@ -231,6 +231,7 @@ def write_orders_data(worksheet, excel_file, data):
             d["total_amount"],
             DATA_CELL_FORMAT,
         )
+        curr_row += 1
 
 
 def export_data():
