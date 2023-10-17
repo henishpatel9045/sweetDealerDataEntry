@@ -29,6 +29,7 @@ class Item(models.Model):
         ("surti_chavanu_500", "Surti Chavanu 500g"),
         ("surti_chavanu_1000", "Surti Chavanu 1kg"),
         ("son_papdi_500", "Son Papdi 500g"),
+        ("son_papdi_1000", "Son Papdi 1kg"),
     ]
 
     ITEM_NAMES = [
@@ -116,6 +117,9 @@ class Order(models.Model):
     son_papdi_500 = models.IntegerField(
         default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
     )
+    son_papdi_1000 = models.IntegerField(
+        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+    )
     total_amount = models.IntegerField(blank=True)
     delivered = models.BooleanField(default=False)
 
@@ -140,7 +144,7 @@ class Order(models.Model):
                 + F("dry_fruite_biscuite_1000"),
                 surti_chavanu=F("surti_chavanu_500") * Decimal("0.5")
                 + F("surti_chavanu_1000"),
-                son_papdi=F("son_papdi_500") * Decimal("0.5"),
+                son_papdi=F("son_papdi_500") * Decimal("0.5") + F("son_papdi_1000"),
             )
             .aggregate(
                 kaju_katri_sum=Sum("kaju_katri"),
@@ -191,16 +195,16 @@ class Order(models.Model):
                 "surti_chavanu_500",
                 "surti_chavanu_1000",
             ),
-            ("Son Papdi", "son_papdi_sum", "son_papdi_500"),
+            ("Son Papdi", "son_papdi_sum", "son_papdi_500", "son_papdi_1000"),
         ]
 
         print(current_ordered_quantity)
 
-        for index, i in enumerate(NAME_MAPPING):
+        for i in NAME_MAPPING:
             if (current_ordered_quantity[i[1]] or 0) + (
                 Decimal(getattr(self, i[2])) * Decimal("0.5")
             ) + (
-                Decimal(getattr(self, i[3]) if index != len(NAME_MAPPING) - 1 else "0")
+                Decimal(getattr(self, i[3]))
             ) > quant[
                 i[0]
             ]:
@@ -225,6 +229,7 @@ class Order(models.Model):
         total += self.surti_chavanu_500 * SURTI_CHAVANU_500
         total += self.surti_chavanu_1000 * SURTI_CHAVANU_1000
         total += self.son_papdi_500 * SON_PAPDI_500
+        total += self.son_papdi_1000 * SON_PAPDI_1000
         return total
 
     def save(self):

@@ -126,41 +126,41 @@ def write_orders_data(worksheet, excel_file, data):
     col = 2
     color = 0
     for item in ITEM_NAMES[0]:
-        if len(item[1]) == 1:
-            worksheet.write(
-                0,
-                col,
-                item[0],
-                excel_file.add_format(
-                    {
-                        "bold": True,
-                        "align": "center",
-                        "valign": "vcenter",
-                        "font_size": "14",
-                        "bg_color": COLORS[color],
-                        "border": 1,
-                    }
-                ),
-            )
+        # if len(item[1]) == 1:
+        #     worksheet.write(
+        #         0,
+        #         col,
+        #         item[0],
+        #         excel_file.add_format(
+        #             {
+        #                 "bold": True,
+        #                 "align": "center",
+        #                 "valign": "vcenter",
+        #                 "font_size": "14",
+        #                 "bg_color": COLORS[color],
+        #                 "border": 1,
+        #             }
+        #         ),
+        #     )
 
-        else:
-            worksheet.merge_range(
-                0,
-                col,
-                0,
-                col + len(item[1]) - 1,
-                item[0],
-                excel_file.add_format(
-                    {
-                        "bold": True,
-                        "align": "center",
-                        "valign": "vcenter",
-                        "font_size": "14",
-                        "bg_color": COLORS[color],
-                        "border": 1,
-                    }
-                ),
-            )
+        # else:
+        worksheet.merge_range(
+            0,
+            col,
+            0,
+            col + len(item[1]) - 1,
+            item[0],
+            excel_file.add_format(
+                {
+                    "bold": True,
+                    "align": "center",
+                    "valign": "vcenter",
+                    "font_size": "14",
+                    "bg_color": COLORS[color],
+                    "border": 1,
+                }
+            ),
+        )
         for pack in item[1]:
             worksheet.write(
                 1,

@@ -1,10 +1,15 @@
 {% extends "order/base.html" %} {% block content %}
 
 <div class="container mt-4">
-  <h1>Add New Order</h1>
+  <h1 style="font-size: 1.5rem;">Add New Order</h1>
   <div class="messages">
     {% for message in messages %}
     <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% for field in form %}
+        {% if field.errors %}
+            <div class="alert alert-danger">{{ field.label_tag }} {{ field.errors }}</div>
+        {% endif %}
     {% endfor %}
   </div>
   <form method="post" id="order-form">
@@ -82,6 +87,7 @@
         <tr>
           <th>સોન પાપડી</th>
           <td>{{form.son_papdi_500}}</td>
+          <td>{{form.son_papdi_1000}}</td>
           <td></td>
         </tr>
         <!-- Add more rows for other items -->

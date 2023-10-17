@@ -40,7 +40,7 @@ class ItemModelAdmin(admin.ModelAdmin):
                 + F("dry_fruite_biscuite_1000"),
                 surti_chavanu=F("surti_chavanu_500") * Decimal("0.5")
                 + F("surti_chavanu_1000"),
-                son_papdi=F("son_papdi_500") * Decimal("0.5"),
+                son_papdi=F("son_papdi_500") * Decimal("0.5") + F("son_papdi_1000"),
             )
             .aggregate(
                 kaju_katri_sum=Sum("kaju_katri"),

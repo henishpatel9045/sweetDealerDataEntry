@@ -65,9 +65,9 @@ def order_edit(request, pk):
         form = OrderForm(instance=order)
         if request.method == "POST":
             form = OrderForm(request.POST, instance=order)
-            print(form.data)
+            # print(form.data)
             if form.is_valid():
-                print("Form Valid")
+                # print("Form Valid")
                 form.save()
                 return redirect("view_orders")
         return render(request, "order/edit.html", {"form": form, "order": order})

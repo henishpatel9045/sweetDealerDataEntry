@@ -23,6 +23,7 @@ SURTI_CHAVANU_500 = 100
 SURTI_CHAVANU_1000 = 200
 
 SON_PAPDI_500 = 170
+SON_PAPDI_1000 = 340
 
 ITEM_NAMES = [
     [
@@ -34,7 +35,7 @@ ITEM_NAMES = [
         ("Mava Mix Mithai", ["500 GM", "1 KG"]),
         ("Dry Fruite Biscuite", ["500 GM", "1 KG"]),
         ("Surti Chavanu", ["500 GM", "1 KG"]),
-        ("Son Papdi", ["500 GM"]),
+        ("Son Papdi", ["500 GM", "1 KG"]),
     ],
     [
         "kaju_katri_500",
@@ -54,5 +55,6 @@ ITEM_NAMES = [
         "surti_chavanu_500",
         "surti_chavanu_1000",
         "son_papdi_500",
+        "son_papdi_1000",
     ],
 ]
