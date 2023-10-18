@@ -14,3 +14,4 @@ class OrderForm(forms.ModelForm):
         # Iterate through all fields in the form and add the 'form-control' class
         for field_name, field in self.fields.items():
             field.widget.attrs["class"] = "form-control"
+            field.widget.attrs["id"] = field_name
