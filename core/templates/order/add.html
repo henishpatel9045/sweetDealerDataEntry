@@ -99,6 +99,12 @@
           <td>{{form.son_papdi_500}}</td>
           <td><input type="text" class="form-control" readonly value="0" id="son_papdi_total" /></td>
         </tr>
+        <tfoot>
+          <td></td>
+          <td></td>
+          <td style="text-align: right; font-weight: bolder; vertical-align: middle;">Total: </td>
+          <td><input type="text" class="form-control" readonly value="0" id="bill_total" /></td>
+        </tfoot>
         <!-- Add more rows for other items -->
       </tbody>
     </table>
@@ -126,19 +132,38 @@
     let oneKg = document.getElementById(item[0]);
     let fiveHundredGm = document.getElementById(item[1]);
     let total = document.getElementById(item[2]);
+    let billTotal = document.getElementById("bill_total");
+    
     oneKg.addEventListener("input", (e) => {
       let oneKgValue = parseInt(oneKg.value);
       let fiveHundredGmValue = parseInt(fiveHundredGm.value);
       let totalValue = oneKgValue * priceList[index][0] + fiveHundredGmValue * priceList[index][1];
       total.value = totalValue | 0;
+
+      let sum = 0
+      fields.forEach((item, index) => {
+        let itemTotal = document.getElementById(item[2]);
+        let itemTotalValue = parseInt(itemTotal.value);
+        sum += itemTotalValue;
+      })
+      billTotal.value = sum;
     });
     fiveHundredGm.addEventListener("input", (e) => {
       let oneKgValue = parseInt(oneKg.value);
       let fiveHundredGmValue = parseInt(fiveHundredGm.value);
       let totalValue = oneKgValue * priceList[index][0] + fiveHundredGmValue * priceList[index][1];
       total.value = totalValue | 0;
+
+      let sum = 0
+      fields.forEach((item, index) => {
+        let itemTotal = document.getElementById(item[2]);
+        let itemTotalValue = parseInt(itemTotal.value);
+        sum += itemTotalValue;
+      })
+      billTotal.value = sum;
     });
   })
+
 
 </script>
 {% endblock %}

@@ -110,6 +110,12 @@
         </tr>
         <!-- Add more rows for other items -->
       </tbody>
+      <tfoot>
+        <td></td>
+        <td></td>
+        <td style="text-align: right; font-weight: bolder; vertical-align: middle;">Total: </td>
+        <td><input type="text" class="form-control" readonly value="0" id="bill_total" /></td>
+      </tfoot>
     </table>
     <div class="w-100">
       <button type="submit" class="btn btn-lg btn-primary" id="submit-order">
@@ -131,6 +137,7 @@
   ["surti_chavanu_1000", "surti_chavanu_500", "surti_chavanu_total"],
   ["son_papdi_1000", "son_papdi_500", "son_papdi_total"]];
 
+  let initTotal = 0
   for (let i = 0; i < fields.length; i++) {
     let oneKg = document.getElementById(fields[i][0]);
     let fiveHundredGm = document.getElementById(fields[i][1]);
@@ -139,24 +146,43 @@
     let fiveHundredGmValue = parseInt(fiveHundredGm.value);
     let totalValue = oneKgValue * priceList[i][0] + fiveHundredGmValue * priceList[i][1];
     total.value = totalValue | 0;
+    initTotal += totalValue;
   }
+  document.getElementById("bill_total").value = initTotal
 
   fields.forEach((item, index) => {
     let oneKg = document.getElementById(item[0]);
     let fiveHundredGm = document.getElementById(item[1]);
     let total = document.getElementById(item[2]);
-    
+    let billTotal = document.getElementById("bill_total");
+
     oneKg.addEventListener("input", (e) => {
       let oneKgValue = parseInt(oneKg.value);
       let fiveHundredGmValue = parseInt(fiveHundredGm.value);
       let totalValue = oneKgValue * priceList[index][0] + fiveHundredGmValue * priceList[index][1];
       total.value = totalValue | 0;
+
+      let sum = 0
+      fields.forEach((item, index) => {
+        let itemTotal = document.getElementById(item[2]);
+        let itemTotalValue = parseInt(itemTotal.value);
+        sum += itemTotalValue;
+      })
+      billTotal.value = sum;
     });
     fiveHundredGm.addEventListener("input", (e) => {
       let oneKgValue = parseInt(oneKg.value);
       let fiveHundredGmValue = parseInt(fiveHundredGm.value);
       let totalValue = oneKgValue * priceList[index][0] + fiveHundredGmValue * priceList[index][1];
       total.value = totalValue | 0;
+
+      let sum = 0
+      fields.forEach((item, index) => {
+        let itemTotal = document.getElementById(item[2]);
+        let itemTotalValue = parseInt(itemTotal.value);
+        sum += itemTotalValue;
+      })
+      billTotal.value = sum;
     });
   })
 
