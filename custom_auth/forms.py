@@ -16,6 +16,7 @@ class UserAdminCreationForm(forms.ModelForm):
             "username",
             "password",
             "name",
+            "books",
         )
 
     def save(self, commit=True):
@@ -52,6 +53,7 @@ class UserAdminChangeForm(forms.ModelForm):
             "username",
             "password",
             "name",
+            "books",
             "is_dealer",
             "is_staff",
             "is_superuser",

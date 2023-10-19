@@ -1,5 +1,7 @@
 from decimal import Decimal
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.template.response import TemplateResponse
 from django.db.models import Sum, F
@@ -12,7 +14,17 @@ admin.site.site_title = "Vadiparti Yuvak Mandal"
 
 @admin.register(Order)
 class OrderModelAdmin(admin.ModelAdmin):
-    list_display = ("id",)
+    list_display = ("bill_number", "dealer_name", "dealer_phone")
+    autocomplete_fields = ("dealer",)
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return super().get_queryset(request).prefetch_related("dealer")
+
+    def dealer_name(self, obj):
+        return obj.dealer.name
+
+    def dealer_phone(self, obj):
+        return obj.dealer.username
 
 
 @admin.register(Item)

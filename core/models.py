@@ -121,6 +121,7 @@ class Order(models.Model):
         default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
     )
     total_amount = models.IntegerField(blank=True)
+    amount_paid = models.IntegerField(default=0, blank=True)
     delivered = models.BooleanField(default=False)
 
     def check_quantity(self) -> bool:
@@ -203,11 +204,7 @@ class Order(models.Model):
         for i in NAME_MAPPING:
             if (current_ordered_quantity[i[1]] or 0) + (
                 Decimal(getattr(self, i[2])) * Decimal("0.5")
-            ) + (
-                Decimal(getattr(self, i[3]))
-            ) > quant[
-                i[0]
-            ]:
+            ) + (Decimal(getattr(self, i[3]))) > quant[i[0]]:
                 raise ValueError(f"Order limit exceeded for {i[0]}.")
 
     def calculate_total(self) -> int:
@@ -234,6 +231,15 @@ class Order(models.Model):
 
     def save(self):
         with transaction.atomic():
+            flag = False
+            for book in self.dealer.books:
+                if self.bill_number > (book - 1) * BILL_PER_BOOK and self.bill_number <= book * BILL_PER_BOOK:
+                    flag = True
+                    break
+            if not flag:
+                raise ValueError("You are not assigned the book of this bill.")
+            if self.amount_paid > self.total_amount:
+                raise ValueError("Amount paid can't be greater than total amount.")
             self.check_quantity()
             self.total_amount = self.calculate_total()
             super().save()
@@ -242,3 +248,11 @@ class Order(models.Model):
         ordering = [
             "bill_number",
         ]
+
+
+# class BillBook(models.Model):
+#     book_number = models.IntegerField(unique=True, db_index=True)
+#     dealer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="books")
+
+#     class Meta:
+#         ordering = ["book_number"]

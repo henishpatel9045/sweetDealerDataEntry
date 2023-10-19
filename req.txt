@@ -3,3 +3,4 @@ djangorestframework
 xlsxwriter
 django-admin-shortcuts
 django-debug-toolbar
+django-jsonform

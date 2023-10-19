@@ -63,6 +63,20 @@ django = ">=3.2.4"
 sqlparse = ">=0.2"
 
 [[package]]
+name = "django-jsonform"
+version = "2.19.1"
+description = "A user-friendly JSON editing form for Django admin."
+optional = false
+python-versions = ">=3.4"
+files = [
+    {file = "django-jsonform-2.19.1.tar.gz", hash = "sha256:a10590318f53335594c8f658cbe765a7b86d6db35bc587637e77c2caf7ddbde4"},
+    {file = "django_jsonform-2.19.1-py3-none-any.whl", hash = "sha256:31f39be40f96845dae18e4546757204db40ec13f929dd007e78f30d88b7a5f97"},
+]
+
+[package.dependencies]
+django = ">=2.0"
+
+[[package]]
 name = "djangorestframework"
 version = "3.14.0"
 description = "Web APIs for Django, made easy."
@@ -129,4 +143,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b2d50fcca77c5bf942fdbf2eafba4126f59194e7d38b2344574c7392a7ec29a9"
+content-hash = "beb492451fabd6a31f5efb262050775fd626c4d83cd20e90a30e9cbd7fc917e3"

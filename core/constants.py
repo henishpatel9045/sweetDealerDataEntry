@@ -58,3 +58,5 @@ ITEM_NAMES = [
         "son_papdi_1000",
     ],
 ]
+
+BILL_PER_BOOK = 25
