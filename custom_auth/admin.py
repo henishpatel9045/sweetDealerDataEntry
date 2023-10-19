@@ -1,12 +1,13 @@
 from typing import Any
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.http.request import HttpRequest
+from django.http.response import HttpResponseRedirect
 from core.models import Order
 from django.utils.html import format_html
 from custom_auth.models import CustomUser as User
 
 from .forms import UserAdminChangeForm, UserAdminCreationForm
-
 
 
 class UserAdmin(BaseUserAdmin):
@@ -74,6 +75,7 @@ class UserAdmin(BaseUserAdmin):
         except Exception as e:
             msg = format_html(f'{e.args[0]} <a href="{request.path}">Open Form</a>')
             return messages.error(request, msg)
-            
+
+
 
 admin.site.register(User, UserAdmin)

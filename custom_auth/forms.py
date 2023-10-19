@@ -1,3 +1,4 @@
+from typing import Any
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.forms import UserChangeForm
@@ -18,6 +19,39 @@ class UserAdminCreationForm(forms.ModelForm):
             "name",
             "books",
         )
+
+    def check_fields(self):
+        issued_books = User.objects.all().values_list("books", flat=True)
+        curr_books = set()
+        for i in issued_books:
+            for a in i:
+                curr_books.add(a)
+
+        for book in self.cleaned_data["books"]:
+            if (book or 0) < 1:
+                raise ValueError("Enter valid book number.")
+            if book in curr_books:
+                raise ValueError(f"Book {book} is already issued.")
+
+    def check_fields(self):
+        issued_books = User.objects.exclude(
+            username=self.cleaned_data["username"]
+        ).values_list("books", flat=True)
+        curr_books = set()
+        for i in issued_books:
+            for a in i:
+                curr_books.add(a)
+
+        for book in self.cleaned_data["books"]:
+            if (book or 0) < 1:
+                raise forms.ValidationError("Enter valid book number.")
+            if book in curr_books:
+                raise forms.ValidationError(f"Book {book} is already issued.")
+
+    def clean_books(self):
+        books = self.cleaned_data["books"]
+        self.check_fields()
+        return books
 
     def save(self, commit=True):
         user = super(UserAdminCreationForm, self).save(commit=False)
@@ -66,3 +100,23 @@ class UserAdminChangeForm(forms.ModelForm):
             password.help_text = password.help_text.format(
                 f"../../{self.instance.pk}/password/"
             )
+
+    def check_fields(self):
+        issued_books = User.objects.exclude(
+            username=self.cleaned_data["username"]
+        ).values_list("books", flat=True)
+        curr_books = set()
+        for i in issued_books:
+            for a in i:
+                curr_books.add(a)
+
+        for book in self.cleaned_data["books"]:
+            if (book or 0) < 1:
+                raise forms.ValidationError("Enter valid book number.")
+            if book in curr_books:
+                raise forms.ValidationError(f"Book {book} is already issued.")
+
+    def clean_books(self):
+        books = self.cleaned_data["books"]
+        self.check_fields()
+        return books
