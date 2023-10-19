@@ -1,6 +1,6 @@
 {% extends "order/base.html" %} {% block content %}
 
-<div class="container mt-4">
+<div class="mt-4">
   <h1 style="font-size: 1.5rem;">Add New Order</h1>
   <div class="messages">
     {% for message in messages %}
@@ -36,8 +36,8 @@
     </div>
     <hr />
     <table class="table table-striped" style="border: 2px solid gray">
-      <thead>
-        <tr>
+      <thead class="thead-dark">
+        <tr style="align-items: center;">
           <th>Item</th>
           <th>1 KG</th>
           <th>500 GM</th>
@@ -45,63 +45,63 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr  style="align-items: center;">
           <th>કાજુ કાત્રી</th>
           <td>{{form.kaju_katri_1000}}</td>
           <td>{{form.kaju_katri_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="kaju_katri_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>મગજ</th>
           <td>{{form.magaj_1000}}</td>
           <td>{{form.magaj_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="magaj_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>પ્રિમયમ મોહનથાળ</th>
           <td>{{form.premium_mohanthal_1000}}</td>
           <td>{{form.premium_mohanthal_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="premium_mohanthal_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>સ્પે. ટોપરાપાક</th>
           <td>{{form.special_toparapak_1000}}</td>
           <td>{{form.special_toparapak_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="special_toparapak_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>બરફી</th>
           <td>{{form.barfi_1000}}</td>
           <td>{{form.barfi_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="barfi_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>માવા મિક્ષ મીઠાઈ</th>
           <td>{{form.mava_mix_mithai_1000}}</td>
           <td>{{form.mava_mix_mithai_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="mava_mix_mithai_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>ડ્રાય ફ્રુટ બીસ્કીટ</th>
           <td>{{form.dry_fruite_biscuite_1000}}</td>
           <td>{{form.dry_fruite_biscuite_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="dry_fruite_biscuite_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>સુરતી ચવાણું</th>
           <td>{{form.surti_chavanu_1000}}</td>
           <td>{{form.surti_chavanu_500}}</td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="surti_chavanu_total" /></td>
         </tr>
-        <tr>
+        <tr  style="align-items: center;">
           <th>સોન પાપડી</th>
           <td>{{form.son_papdi_1000}}</td>
           <td>{{form.son_papdi_500}}</td>
@@ -109,24 +109,20 @@
               readonly value="0" id="son_papdi_total" /></td>
         </tr>
       <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-          <td style="text-align: right; font-weight: bolder; vertical-align: middle;">Total: </td>
+        <tr  style="align-items: center;">
+          
+          <td colspan="3" style="text-align: right; font-weight: bolder; vertical-align: middle;">Total: </td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="bill_total" /></td>
         </tr>
         <tr>
-          <td></td>
-          <td></td>
-          <td style="text-align: right; font-weight: bolder; vertical-align: middle;">Amount Paid: </td>
+          <td colspan="3" style="text-align: right; font-weight: bolder; vertical-align: middle;">Amount Paid: </td>
           <td><input type="text" class="form-control" name="amount_paid"
               style="border: 2px solid gray; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;" value="0" id="amount_paid" /></td>
         </tr>
         <tr>
-          <td></td>
-          <td></td>
-          <td style="text-align: right; font-weight: bolder; vertical-align: middle;">Remaining amount: </td>
+
+          <td colspan="3" style="text-align: right; font-weight: bolder; vertical-align: middle;">Remaining amount: </td>
           <td><input type="text" class="form-control" style="border: 0; outline: 0; padding: 0; padding-right: 0.5rem; text-align: right;"
               readonly value="0" id="remaining_amount" /></td>
         </tr>
