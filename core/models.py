@@ -238,10 +238,10 @@ class Order(models.Model):
                     break
             if not flag:
                 raise ValueError("You are not assigned the book of this bill.")
+            self.total_amount = self.calculate_total()
             if self.amount_paid > self.total_amount:
                 raise ValueError("Amount paid can't be greater than total amount.")
             self.check_quantity()
-            self.total_amount = self.calculate_total()
             super().save()
 
     class Meta:

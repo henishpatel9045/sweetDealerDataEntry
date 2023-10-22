@@ -10,7 +10,7 @@
     </div>
     {% endif %} {% endfor %}
   </div>
-  <form method="post" id="order-form">
+  <form method="post" id="order-form" onsubmit="cleanForm();">
     {% csrf_token %}
     <div class="row">
       <input type="hidden" name="dealer" value="{{order.dealer.pk}}" />
@@ -408,9 +408,19 @@
     let total = document.getElementById(item[2]);
     let billTotal = document.getElementById("bill_total");
 
+    oneKg.required = false;
+    fiveHundredGm.required = false;
+
+    if (oneKg.value == 0) {
+      oneKg.value = "";
+    }
+    if (fiveHundredGm.value == 0) {
+      fiveHundredGm.value = "";
+    }
+
     oneKg.addEventListener("input", (e) => {
-      let oneKgValue = parseInt(oneKg.value);
-      let fiveHundredGmValue = parseInt(fiveHundredGm.value);
+      let oneKgValue = parseInt(oneKg.value | 0);
+      let fiveHundredGmValue = parseInt(fiveHundredGm.value | 0);
       let totalValue =
         oneKgValue * priceList[index][0] +
         fiveHundredGmValue * priceList[index][1];
@@ -425,8 +435,8 @@
       billTotal.value = sum;
     });
     fiveHundredGm.addEventListener("input", (e) => {
-      let oneKgValue = parseInt(oneKg.value);
-      let fiveHundredGmValue = parseInt(fiveHundredGm.value);
+      let oneKgValue = parseInt(oneKg.value | 0);
+      let fiveHundredGmValue = parseInt(fiveHundredGm.value | 0);
       let totalValue =
         oneKgValue * priceList[index][0] +
         fiveHundredGmValue * priceList[index][1];
@@ -449,6 +459,25 @@
   amountPaid.addEventListener("input", (e) => {
     remainingAmount.value = bill_total.value - amountPaid.value;
   });
+
+  const cleanForm = () => {
+    fields.forEach((item, index) => {
+      let oneKg = document.getElementById(item[0]);
+      let fiveHundredGm = document.getElementById(item[1]);
+      let total = document.getElementById(item[2]);
+      oneKg.value = oneKg.value?.trim() || oneKg.value;
+      fiveHundredGm.value = fiveHundredGm.value?.trim() || fiveHundredGm.value;
+
+      if (oneKg.value == "" || oneKg.value == null) {
+        oneKg.value = 0;
+      }
+      if (fiveHundredGm.value == "" || fiveHundredGm.value == null) {
+        fiveHundredGm.value = 0;
+      }
+
+      return true
+    })
+  }
 </script>
 
 {% endblock %}

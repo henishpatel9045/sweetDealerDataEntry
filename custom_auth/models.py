@@ -10,7 +10,6 @@ USER_BOOKS = {
         "type": "number",
         "minimum": "1",
     },
-    "minItems": 1,
 }
 
 
