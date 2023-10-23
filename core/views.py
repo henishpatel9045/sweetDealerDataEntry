@@ -86,11 +86,20 @@ def view_orders(request):
     search = request.GET.get("search", None)
 
     total_summary = (
-        Order.objects.prefetch_related("dealer")
-        .filter(dealer=request.user)
-        .aggregate(
-            user_total=Sum("total_amount"),
-            total_orders=Count("pk"),
+        (
+            Order.objects.prefetch_related("dealer")
+            .filter(dealer=request.user)
+            .aggregate(
+                user_total=Sum("total_amount"),
+                total_orders=Count("pk"),
+            )
+        )
+        if request.user.is_superuser == False
+        else (
+            Order.objects.prefetch_related("dealer").aggregate(
+                user_total=Sum("total_amount"),
+                total_orders=Count("pk"),
+            )
         )
     )
     total_summary["user_total"] = total_summary["user_total"] or 0
@@ -165,7 +174,9 @@ def dealer_total_detail(request):
         if request.user.is_superuser:
             data = []
             for book in books:
-                filtered_qs = list(filter(lambda x: math.ceil(x[1] / BILL_PER_BOOK) == book, qs))
+                filtered_qs = list(
+                    filter(lambda x: math.ceil(x[1] / BILL_PER_BOOK) == book, qs)
+                )
                 data.append(
                     {
                         "book": book,
@@ -177,7 +188,9 @@ def dealer_total_detail(request):
         else:
             data = []
             for book in request.user.books:
-                filtered_qs = list(filter(lambda x: math.ceil(x[1] / BILL_PER_BOOK) == book, qs))
+                filtered_qs = list(
+                    filter(lambda x: math.ceil(x[1] / BILL_PER_BOOK) == book, qs)
+                )
                 data.append(
                     {
                         "book": book,
