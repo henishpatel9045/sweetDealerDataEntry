@@ -1,5 +1,12 @@
 from django.urls import path
-from .views import order_delete, view_orders, order_edit, order_add, download_excel
+from .views import (
+    order_delete,
+    view_orders,
+    order_edit,
+    order_add,
+    download_excel,
+    dealer_total_detail,
+)
 
 
 urlpatterns = [
@@ -8,4 +15,5 @@ urlpatterns = [
     path("edit/<int:pk>/", order_edit, name="edit_order"),
     path("delete/<int:pk>/", order_delete, name="delete_order"),
     path("download/", download_excel, name="download_excel"),
+    path("dealer/total", dealer_total_detail, name="total_detail"),
 ]

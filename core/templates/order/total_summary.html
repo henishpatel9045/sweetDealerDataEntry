@@ -1,0 +1,26 @@
+{% extends 'order/base.html' %}
+{% load custom_filters %}
+{% block content %}
+<h1 style="font-size: 1.5rem;">Bill Book summary</h1>
+<a class="btn btn-secondary mb-2" href="/order/list">Back</a>
+<table class="table table-striped col-12" style="width: 100%;">
+    <thead class="col-12" style="width: 100%;">
+        <tr>
+            <th>Book No.</th>
+            <th>Total orders</th>
+            <th>Book Total</th>
+            <th>Advanced collected</th>
+        </tr>
+    </thead>
+    <tbody style="width: 100%;">
+        {% for order in data %}
+        <tr>
+            <th>{{ order.book }}</th>
+            <td>{{ order.total_orders }}</td>
+            <td style="font-weight: bold; color: green;">{{ order.total|intcomma }} ₹</td>
+            <td style="font-weight: bold; color: green;">{{ order.paid|intcomma }} ₹</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

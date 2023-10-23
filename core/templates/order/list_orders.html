@@ -1,9 +1,11 @@
 {% extends "order/base.html" %} {% block content %}
+{% load custom_filters %}
 <div class="w-full">
   {% if user.is_superuser %}
   <div class="row mb-3 flex justify-content-between mx-1">
     <h1 style="font-size: 2rem">Orders</h1>
-    <button class="btn btn-success text-white font-weight-bold p-1" style="font-size: 1.2rem" onclick="downloadExcel();">
+    <button class="btn btn-success text-white font-weight-bold p-1" style="font-size: 1.2rem"
+      onclick="downloadExcel();">
       Download Excel
     </button>
   </div>
@@ -12,11 +14,15 @@
 
   {% endif %}
 
-  <div class="row mb-3 flex justify-content-end">
+  <div class="row mb-3 flex justify-content-end" style="row-gap: 0.5rem;">
+    <div class="col-12 col-lg-6" style="text-align: left; background-color">
+      <span style="font-size: 1.5rem; font-weight: bold;">Total: </span>
+      <span style="font-size: 1.5rem; font-weight: bold; color: green;"">{{total_summary.user_total|intcomma}} ₹ <a href="/order/dealer/total" style="font-size: 1rem;" class="btn-xs btn-link">See more</a></span>
+    </div>
     <div class="col-12 col-lg-6">
       <form class="input-group" method="get">
-        <input type="text" class="form-control" id="search" name="search" placeholder="Search by bill number or customer name"
-          value="{{ request.GET.search|default:'' }}" />
+        <input type="text" class="form-control" id="search" name="search"
+          placeholder="Search by bill number or customer name" value="{{ request.GET.search|default:'' }}" />
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="submit" id="search-button">
             <i class="fa fa-search"></i> Search
@@ -28,7 +34,7 @@
   <table class="w-full table table-striped">
     <thead>
       <tr>
-        <th>Bill Number</th>
+        <th>Bill No.</th>
         <th>Customer Name</th>
         {% comment %}
         <th>Date</th>
@@ -49,7 +55,7 @@
         <td>{{ order.date }}</td>
         {% endcomment %}
         <td style="color: green; font-weight: bold">
-          {{ order.total_amount }} ₹
+          {{ order.total_amount|intcomma }} ₹
         </td>
         {% comment %}
         <td>

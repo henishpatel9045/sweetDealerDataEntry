@@ -77,5 +77,4 @@ class UserAdmin(BaseUserAdmin):
             return messages.error(request, msg)
 
 
-
 admin.site.register(User, UserAdmin)
