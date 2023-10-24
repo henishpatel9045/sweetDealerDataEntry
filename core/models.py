@@ -160,8 +160,6 @@ class Order(models.Model):
             )
         )
 
-        print(current_ordered_quantity)
-
         NAME_MAPPING = [
             ("Kaju Katri", "kaju_katri_sum", "kaju_katri_500", "kaju_katri_1000"),
             ("Magaj", "magaj_sum", "magaj_500", "magaj_1000"),
@@ -198,8 +196,6 @@ class Order(models.Model):
             ),
             ("Son Papdi", "son_papdi_sum", "son_papdi_500", "son_papdi_1000"),
         ]
-
-        print(current_ordered_quantity)
 
         for i in NAME_MAPPING:
             if (current_ordered_quantity[i[1]] or 0) + (
