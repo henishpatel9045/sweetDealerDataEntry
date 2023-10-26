@@ -29,8 +29,7 @@
       <div class="col-6">
         <div class="form-group">
           <label for="order_date">Order Date</label>
-
-          {{form.date}}
+          <input type="date" class="form-control" name="date" />
         </div>
       </div>
     </div>
@@ -352,6 +351,9 @@
   </form>
 </div>
 <script>
+  let date = document.getElementsByName("date")[0];
+  date.value = convertToYYYYMMDD("{{order.date}}");
+
   let priceList = [
     [680, 340],
     [370, 190],
@@ -460,7 +462,17 @@
     remainingAmount.value = bill_total.value - amountPaid.value;
   });
 
+  function convertToYYYYMMDD(selectedDate) {
+    const dateObject = new Date(selectedDate);
+    const year = dateObject.getFullYear();
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateObject.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   const cleanForm = () => {
+    date.value = convertToYYYYMMDD(date.value);
+
     fields.forEach((item, index) => {
       let oneKg = document.getElementById(item[0]);
       let fiveHundredGm = document.getElementById(item[1]);
