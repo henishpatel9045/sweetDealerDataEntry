@@ -40,6 +40,7 @@
         <th>Date</th>
         {% endcomment %}
         <th>Total Amount</th>
+        <th>Advance Paid</th>
         {% comment %}
         <th>Delivered</th>
         {% endcomment %}
@@ -56,6 +57,9 @@
         {% endcomment %}
         <td style="color: green; font-weight: bold">
           {{ order.total_amount|intcomma }} ₹
+        </td>
+        <td style="color: blue; font-weight: bold">
+          {{ order.amount_paid|intcomma }} ₹
         </td>
         {% comment %}
         <td>
