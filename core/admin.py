@@ -32,6 +32,8 @@ class ItemModelAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "quantity_available",
+        "box_500_gm",
+        "box_1_kg",
         "quantity_ordered",
     )
 
@@ -77,3 +79,12 @@ class ItemModelAdmin(admin.ModelAdmin):
         )
 
         return str(total) + " KGs"
+    
+    def box_500_gm(self, obj):
+        qs = Order.objects.all().aggregate(total_500=Sum(f"{obj.name.replace(' ', '_').lower()}_500"))
+        return str(qs.get("total_500", 0)) 
+
+    def box_1_kg(self, obj):
+        qs = Order.objects.all().aggregate(total_1000=Sum(f"{obj.name.replace(' ', '_').lower()}_1000"))
+        return str(qs.get("total_1000", 0))
+    
