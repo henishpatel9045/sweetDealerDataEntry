@@ -8,6 +8,7 @@ from django.db.models import Sum, F, Avg
 from django.utils.html import format_html
 
 from core.constants import ITEM_NAMES
+from core.forms import OrderForm
 
 from .models import Order, Item
 
@@ -19,6 +20,39 @@ admin.site.site_title = "Vadiparti Yuvak Mandal"
 class OrderModelAdmin(admin.ModelAdmin):
     list_display = ("bill_number", "dealer_name", "dealer_phone")
     autocomplete_fields = ("dealer",)
+
+    fieldsets = (
+        (
+            "Customer Details",
+            {
+                # "classes": ("collapse",),
+                "fields": (
+                    ("dealer", "bill_number"),
+                    "customer_name",
+                    "date",
+                    ("total_amount", "amount_paid"),
+                    "delivered",
+                ),
+            },
+        ),
+        (
+            "Item Details",
+            {
+                "classes": ("wide","extrapretty",),
+                "fields": (
+                    ("kaju_katri_500", "kaju_katri_1000"),
+                    ("magaj_500", "magaj_1000"),
+                    ("premium_mohanthal_500", "premium_mohanthal_1000"),
+                    ("special_toparapak_500", "special_toparapak_1000"),
+                    ("barfi_500", "barfi_1000"),
+                    ("mava_mix_mithai_500", "mava_mix_mithai_1000"),
+                    ("dry_fruite_biscuite_500", "dry_fruite_biscuite_1000"),
+                    ("surti_chavanu_500", "surti_chavanu_1000"),
+                    ("son_papdi_500", "son_papdi_1000"),
+                ),
+            },
+        ),
+    )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
         return super().get_queryset(request).prefetch_related("dealer")

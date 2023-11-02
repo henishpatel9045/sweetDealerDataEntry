@@ -67,58 +67,94 @@ class Order(models.Model):
     customer_name = models.CharField(max_length=200, default="")
     date = models.DateField(default=timezone.now)
     kaju_katri_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Kaju Katri 500g",
     )
     kaju_katri_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Kaju Katri 1kg",
     )
     magaj_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Magaj 500g",
     )
     magaj_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Magaj 1kg",
     )
     premium_mohanthal_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Premium Mohanthal 500g",
     )
     premium_mohanthal_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Premium Mohanthal 1kg",
     )
     special_toparapak_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Special Toparapak 500g",
     )
     special_toparapak_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Special Toparapak 1kg",
     )
     barfi_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Barfi 500g",
     )
     barfi_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Barfi 1kg",
     )
     mava_mix_mithai_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Mava Mix Mithai 500g",
     )
     mava_mix_mithai_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Mava Mix Mithai 1kg",
     )
     dry_fruite_biscuite_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Dry Fruite Biscuite 500g",
     )
     dry_fruite_biscuite_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Dry Fruite Biscuite 1kg",
     )
     surti_chavanu_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Surti Chavanu 500g",
     )
     surti_chavanu_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Surti Chavanu 1kg",
     )
     son_papdi_500 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Son Papdi 500g",
     )
     son_papdi_1000 = models.IntegerField(
-        default=0, validators=[MinValueValidator(0, "Quantity can't be negative.")]
+        default=0,
+        validators=[MinValueValidator(0, "Quantity can't be negative.")],
+        verbose_name="Son Papdi 1kg",
     )
     total_amount = models.IntegerField(blank=True)
     amount_paid = models.IntegerField(default=0, blank=True)
@@ -229,7 +265,10 @@ class Order(models.Model):
         with transaction.atomic():
             flag = False
             for book in self.dealer.books:
-                if self.bill_number > (book - 1) * BILL_PER_BOOK and self.bill_number <= book * BILL_PER_BOOK:
+                if (
+                    self.bill_number > (book - 1) * BILL_PER_BOOK
+                    and self.bill_number <= book * BILL_PER_BOOK
+                ):
                     flag = True
                     break
             if not flag:
@@ -244,6 +283,10 @@ class Order(models.Model):
         ordering = [
             "bill_number",
         ]
+    
+    def __str__(self):
+        return f"{self.bill_number}, Book-{self.bill_number // 25 + 1}"
+    
 
 
 # class BillBook(models.Model):
