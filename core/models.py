@@ -48,17 +48,51 @@ class Item(models.Model):
     current_quantity = models.DecimalField(
         max_digits=10, decimal_places=1, default=0, help_text="In KGs"
     )
-    # ordered_quantity = models.DecimalField(
-    #     max_digits=10, decimal_places=1, default=0, help_text="In KGs"
-    # )
+    box_dispatched_500 = models.IntegerField(default=0)
+    box_dispatched_1000 = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
 
+    @property
+    def box_500_ready(self):
+        stock = Stock.objects.filter(item__pk=self.pk).aggregate(
+            total=Sum("box_500")
+        )["total"]
+        return stock
 
-# class BillBook(models.Model):
-#     dealer = models.ForeignKey(User, on_delete=models.CASCADE)
-#     boo
+    @property
+    def box_1000_ready(self):
+        stock = Stock.objects.filter(item__pk=self.pk).aggregate(
+            total=Sum("box_1000")
+        )["total"]
+        return stock
+
+
+class Stock(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    box_500 = models.IntegerField(default=0)
+    box_1000 = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        return str(self.date)
+
+
+def update_item_model(item, box_500, box_1000, add=True):
+    item = Item.objects.get(name=item)
+    if add:
+        item.box_dispatched_500 += box_500
+        item.box_dispatched_1000 += box_1000
+    else:
+        item.box_dispatched_500 -= box_500
+        item.box_dispatched_1000 -= box_1000
+    item.save()
+
+
+def update_item_stock(data: dict, add=True):
+    for item in data.keys():
+        update_item_model(item, data[item]["box_500"], data[item]["box_1000"], add=add)
 
 
 class Order(models.Model):
@@ -157,8 +191,12 @@ class Order(models.Model):
         verbose_name="Son Papdi 1kg",
     )
     total_amount = models.IntegerField(blank=True)
-    amount_paid = models.IntegerField(default=0, blank=True)
-    delivered = models.BooleanField(default=False)
+    amount_paid = models.IntegerField(
+        default=0, blank=True, verbose_name="Advanced Collected"
+    )
+    dispatched = models.BooleanField(default=False)
+    dispatched_date = models.DateField(blank=True, null=True)
+    amount_received = models.IntegerField(default=0, blank=True)
 
     def check_quantity(self) -> bool:
         initial_quantity = Item.objects.all()
@@ -277,21 +315,25 @@ class Order(models.Model):
             if self.amount_paid > self.total_amount:
                 raise ValueError("Amount paid can't be greater than total amount.")
             self.check_quantity()
+            if self.pk is not None:
+                current_order = Order.objects.get(pk=self.pk)
+                data = {}
+                for index, item in enumerate(ITEM_NAMES[0]):
+                    data[item[0]] = {
+                        "box_500": getattr(self, ITEM_NAMES[1][index * 2]),
+                        "box_1000": getattr(self, ITEM_NAMES[1][index * 2 + 1]),
+                    }
+                if current_order.dispatched == False and self.dispatched:
+                    update_item_stock(data)
+                elif current_order.dispatched == True and self.dispatched == False:
+                    update_item_stock(data, add=False)
+
             super().save()
 
     class Meta:
         ordering = [
             "bill_number",
         ]
-    
+
     def __str__(self):
-        return f"{self.bill_number}, Book-{self.bill_number // 25 + 1}"
-    
-
-
-# class BillBook(models.Model):
-#     book_number = models.IntegerField(unique=True, db_index=True)
-#     dealer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="books")
-
-#     class Meta:
-#         ordering = ["book_number"]
+        return f"{self.bill_number}, Book-{self.bill_number // BILL_PER_BOOK + 1}"

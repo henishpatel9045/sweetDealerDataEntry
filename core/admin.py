@@ -1,16 +1,17 @@
 from decimal import Decimal
 from typing import Any
 from django.contrib import admin
+from django.contrib.admin.views.main import ChangeList
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
-from django.contrib.admin.views.main import ChangeList
-from django.db.models import Sum, F, Avg
 from django.utils.html import format_html
+from core.changelists import ItemChangeList, OrderChangeList
 
 from core.constants import ITEM_NAMES
+from core.filters import BillBookFilter, DealerFilter
 from core.forms import OrderForm
 
-from .models import Order, Item
+from .models import Order, Item, Stock
 
 admin.site.site_header = "Vadiparti Yuvak Mandal"
 admin.site.site_title = "Vadiparti Yuvak Mandal"
@@ -18,9 +19,24 @@ admin.site.site_title = "Vadiparti Yuvak Mandal"
 
 @admin.register(Order)
 class OrderModelAdmin(admin.ModelAdmin):
-    list_display = ("bill_number", "dealer_name", "dealer_phone")
+    list_display = (
+        "bill",
+        "dealer_detail",
+        "bill_total",
+        "received",
+        "amount_to_collect",
+    )
     autocomplete_fields = ("dealer",)
-
+    search_fields = (
+        "bill_number",
+        "dealer__name",
+        "dealer__username",
+    )
+    actions = (
+        "dispatch_orders",
+        "calculate_totals",
+    )
+    list_filter = (BillBookFilter, DealerFilter, "dispatched")
     fieldsets = (
         (
             "Customer Details",
@@ -30,15 +46,18 @@ class OrderModelAdmin(admin.ModelAdmin):
                     ("dealer", "bill_number"),
                     "customer_name",
                     "date",
-                    ("total_amount", "amount_paid"),
-                    "delivered",
+                    ("total_amount", "amount_paid", "amount_received"),
+                    "dispatched",
                 ),
             },
         ),
         (
             "Item Details",
             {
-                "classes": ("wide","extrapretty",),
+                "classes": (
+                    "wide",
+                    "extrapretty",
+                ),
                 "fields": (
                     ("kaju_katri_500", "kaju_katri_1000"),
                     ("magaj_500", "magaj_1000"),
@@ -54,58 +73,83 @@ class OrderModelAdmin(admin.ModelAdmin):
         ),
     )
 
+    @admin.action(description="Dispatch Orders")
+    def dispatch_orders(self, request, queryset):
+        errors = []
+        for order in queryset:
+            try:
+                order.dispatched = True
+                order.save()
+            except Exception as e:
+                errors.append(str(e))
+        if errors:
+            self.message_user(request, "\n".join(errors))
+        else:
+            self.message_user(request, "Orders dispatched successfully")
+
+    @admin.action(description="Calculate Totals")
+    def calculate_totals(self, request, queryset):
+        errors = []
+        for order in queryset:
+            try:
+                order.save()
+            except Exception as e:
+                errors.append(str(e))
+        if errors:
+            self.message_user(request, "\n".join(errors))
+        else:
+            self.message_user(request, "Totals calculated successfully")
+
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
         return super().get_queryset(request).prefetch_related("dealer")
 
-    def dealer_name(self, obj):
-        return obj.dealer.name
+    def get_changelist(self, request, **kwargs):
+        return OrderChangeList
 
-    def dealer_phone(self, obj):
-        return obj.dealer.username
+    def bill(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;">{obj.bill}</div>'
+            )
+        return obj.bill_number
+
+    def bill_total(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;">{obj.bill_total}</div>'
+            )
+        return obj.total_amount
+
+    def received(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;">{obj.received}</div>'
+            )
+        return obj.amount_received
+
+    def amount_to_collect(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;">{obj.amount_to_collect}</div>'
+            )
+        return obj.total_amount - obj.amount_received
+
+    def dealer_detail(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;"></div>'
+            )
+        return f"{obj.dealer.name} - {obj.dealer.username}"
 
 
-class TotalAveragesChangeList(ChangeList):
-    # provide the list of fields that we need to calculate averages and totals
-    fields_to_total = [
-        "box_500_gm",
-        "box_1_kg",
-        "quantity_ordered",
-    ]
-
-    def get_total_values(self):
-        """
-        Get the totals
-        """
-        # basically the total parameter is an empty instance of the given model
-        total = Item()
-        total.name = "Totals"  # the label for the totals row
-        orders = Order.objects.all().values_list(*ITEM_NAMES[1])
-        total_500 = sum(
-            i for order in orders for ind, i in enumerate(order) if ind % 2 == 0
-        )
-        total_1000 = sum(
-            i for order in orders for ind, i in enumerate(order) if ind % 2 == 1
-        )
-        quantity_total = total_500 * 0.5 + total_1000
-        total.box_500_gm = str(total_500)
-        total.box_1_kg = str(total_1000)
-        total.quantity_ordered = str(quantity_total)
-
-        return total
-
-    def get_results(self, request):
-        """
-        The model admin gets queryset results from this method
-        and then displays it in the template
-        """
-        super(TotalAveragesChangeList, self).get_results(request)
-        # first get the totals from the current changelist
-        total = self.get_total_values()
-        # small hack. in order to get the objects loaded we need to call for
-        # queryset results once so simple len function does it
-        len(self.result_list)
-        # and finally we add our custom rows to the resulting changelist
-        self.result_list._result_cache.append(total)
+class StockAdminInline(admin.TabularInline):
+    model = Stock
+    extra = 1
+    fields = (
+        "date",
+        "box_500",
+        "box_1000",
+    )
 
 
 @admin.register(Item)
@@ -114,12 +158,17 @@ class ItemModelAdmin(admin.ModelAdmin):
         "item_name",
         "quantity_available",
         "box_500_gm",
+        "box_500_ready",
+        "dispatched_500_gm",
         "box_1_kg",
+        "box_1000_ready",
+        "dispatched_1_kg",
         "quantity_ordered",
     )
+    inlines = [StockAdminInline]
 
     def get_changelist(self, request, **kwargs):
-        return TotalAveragesChangeList
+        return ItemChangeList
 
     def changelist_view(self, request):
         self.orders = Order.objects.all().values_list(*ITEM_NAMES[1])
@@ -131,6 +180,34 @@ class ItemModelAdmin(admin.ModelAdmin):
                 '<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">Totals</div>'
             )
         return obj.name
+
+    def box_500_ready(self, obj):
+        if hasattr(obj, "box_500_gm"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">{obj.box_500_done}</div>'
+            )
+        return obj.box_500_ready
+
+    def dispatched_500_gm(self, obj):
+        if hasattr(obj, "box_500_gm"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">{obj.box_dispatched_500}</div>'
+            )
+        return obj.box_dispatched_500
+    
+    def box_1000_ready(self, obj):
+        if hasattr(obj, "box_500_gm"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">{obj.box_1000_done}</div>'
+            )
+        return obj.box_1000_ready
+
+    def dispatched_1_kg(self, obj):
+        if hasattr(obj, "box_500_gm"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">{obj.box_dispatched_1000}</div>'
+            )
+        return obj.box_dispatched_1000
 
     def quantity_available(self, obj):
         if hasattr(obj, "box_500_gm"):
