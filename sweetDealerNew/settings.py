@@ -154,6 +154,11 @@ ADMIN_SHORTCUTS = [
                 "url": "/order/list/",
                 "icon": "home",
             },
+            {
+                "title": "Dispatch Screen",
+                "url": "/order/dispatch/",
+                "icon": "home",
+            },
         ],
     },
 ]
