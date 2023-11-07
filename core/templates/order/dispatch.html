@@ -1,0 +1,268 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispatch</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <div style="width: 100%; padding: 1rem 0.8rem">
+        
+       
+        <div style="width: 100%">
+            <div class="col-12">
+                <form class="input-group" method="get" style="gap: 0.8rem;">
+                    <div style="gap: 0.5rem; flex: 1; display: flex; align-items: center; justify-content: space-between;">
+                        <input type="text" class="form-control" id="search" name="book"
+                        placeholder="Book Number" value="{{ request.GET.book|default:'' }}" />
+                        <input type="text" class="form-control" id="bill_number" name="bill_number"
+                        placeholder="Bill Number" value="{{ request.GET.bill_number|default:'' }}" />
+                    </div>
+                 <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit" id="search-button">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <h1>Book: #{{book.number}} - {{book.dealer_name}}</h1>
+          <h2>Book Total Data</h2>
+          <div>
+              <table class="table table-striped" style="border: 2px solid gray">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Item</th>
+                    <th>1 KG</th>
+                    <th>500 GM</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if book_total_data.kaju_katri_1000 > 0 or book_total_data.kaju_katri_500 > 0 %}
+                  <tr>
+                    <th>કાજુ કાત્રી</th>
+                    <td>{{book_total_data.kaju_katri_1000}}</td>
+                    <td>{{book_total_data.kaju_katri_500}}</td>
+                    
+                  </tr>
+                  {% endif %}
+                   {% if book_total_data.magaj_1000 > 0 or book_total_data.magaj_500 > 0 %}
+
+                  <tr>
+                    <th>મગજ</th>
+                    <td>{{book_total_data.magaj_1000}}</td>
+                    <td>{{book_total_data.magaj_500}}</td>
+                    
+                    
+                  </tr>
+                  {% endif %} 
+                  {% if book_total_data.premium_mohanthal_1000 > 0 or book_total_data.premium_mohanthal_500 > 0 %}
+
+                  <tr>
+                    <th>પ્રિમયમ મોહનથાળ</th>
+                    <td>{{book_total_data.premium_mohanthal_1000}}</td>
+                    <td>{{book_total_data.premium_mohanthal_500}}</td>
+                 
+                  </tr>
+                  {% endif %} 
+                  {% if book_total_data.special_toparapak_1000 > 0 or book_total_data.special_toparapak_500 > 0 %}
+
+                  <tr>
+                    <th>સ્પે. ટોપરાપાક</th>
+                    <td>{{book_total_data.special_toparapak_1000}}</td>
+                    <td>{{book_total_data.special_toparapak_500}}</td>
+                  
+                   
+                  </tr>
+                  {% endif %}
+                  {% if book_total_data.barfi_1000 > 0 or book_total_data.barfi_500 > 0 %}
+
+                  <tr>
+                    <th>બરફી</th>
+                    <td>{{book_total_data.barfi_1000}}</td>
+                    <td>{{book_total_data.barfi_500}}</td>
+                 
+                    
+                  </tr>
+                  {% endif %} 
+                  {% if book_total_data.mava_mix_mithai_1000 > 0 or book_total_data.mava_mix_mithai_500 > 0 %}
+
+                  <tr>
+                    <th>માવા મિક્ષ મીઠાઈ</th>
+                    <td>{{book_total_data.mava_mix_mithai_1000}}</td>
+                    <td>{{book_total_data.mava_mix_mithai_500}}</td>
+                  
+                
+                  </tr>
+                  {% endif %} 
+                  {% if book_total_data.dry_fruite_biscuite_1000 > 0 or book_total_data.dry_fruite_biscuite_500 > 0 %}
+
+                  <tr>
+                    <th>ડ્રાય ફ્રુટ બીસ્કીટ</th>
+                    <td>{{book_total_data.dry_fruite_biscuite_1000}}</td>
+                    <td>{{book_total_data.dry_fruite_biscuite_500}}</td>
+                   
+                   
+                  </tr>
+                  {% endif %} 
+                  {% if book_total_data.surti_chavanu_1000 > 0 or book_total_data.surti_chavanu_500 > 0 %}
+
+                  <tr>
+                    <th>સુરતી ચવાણું</th>
+                    <td>{{book_total_data.surti_chavanu_1000}}</td>
+                    <td>{{book_total_data.surti_chavanu_500}}</td>
+                   
+                  </tr>
+                  {% endif %}
+                  {% if book_total_data.son_papdi_1000 > 0 or book_total_data.son_papdi_500 > 0 %}
+
+                  <tr>
+                    <th>સોન પાપડી</th>
+                    <td>{{book_total_data.son_papdi_1000}}</td>
+                    <td>{{book_total_data.son_papdi_500}}</td>
+                   
+           
+                  </tr>
+                  {% endif %}
+                  <!-- Add more rows for other items -->
+                </tbody>
+            
+            </table>
+          </div>
+
+
+        <div class="accordion" id="ordersContainer">
+    {% for order in book_orders %}
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#bill_{{order.bill_number}}"
+          aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}""
+          aria-controls="collapseOne"
+        >   
+          Bill #{{ order.bill_number }}
+        </button>
+      </h2>
+      <div
+        id="bill_{{order.bill_number}}"
+        class="accordion-collapse collapse show"
+        data-bs-parent="#ordersContainer"
+      >
+        <div class="accordion-body">
+            <h1 style="font-size: 1.5rem">Order #{{ order.bill_number }}</h1>
+            <div>
+              <div class="row">
+                <div class="col-md-6">
+                  <h2 class="form-group">
+                    {{order.customer_name}}
+                  </h2>
+                </div>
+              </div>
+              <table class="table table-striped" style="border: 2px solid gray">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Item</th>
+                    <th>1 KG</th>
+                    <th>500 GM</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if order.kaju_katri_1000 > 0 or order.kaju_katri_500 > 0 %}
+                  <tr>
+                    <th>કાજુ કાત્રી</th>
+                    <td>{{order.kaju_katri_1000}}</td>
+                    <td>{{order.kaju_katri_500}}</td>
+                    
+                  </tr>
+                  {% endif %}
+                   {% if order.magaj_1000 > 0 or order.magaj_500 > 0 %}
+
+                  <tr>
+                    <th>મગજ</th>
+                    <td>{{order.magaj_1000}}</td>
+                    <td>{{order.magaj_500}}</td>
+                   
+                  </tr>
+                  {% endif %} 
+                  {% if order.premium_mohanthal_1000 > 0 or order.premium_mohanthal_500 > 0 %}
+
+                  <tr>
+                    <th>પ્રિમયમ મોહનથાળ</th>
+                    <td>{{order.premium_mohanthal_1000}}</td>
+                    <td>{{order.premium_mohanthal_500}}</td>
+                   
+                  </tr>
+                  {% endif %} 
+                  {% if order.special_toparapak_1000 > 0 or order.special_toparapak_500 > 0 %}
+
+                  <tr>
+                    <th>સ્પે. ટોપરાપાક</th>
+                    <td>{{order.special_toparapak_1000}}</td>
+                    <td>{{order.special_toparapak_500}}</td>
+                   
+                  </tr>
+                  {% endif %}
+                  {% if order.barfi_1000 > 0 or order.barfi_500 > 0 %}
+
+                  <tr>
+                    <th>બરફી</th>
+                    <td>{{order.barfi_1000}}</td>
+                    <td>{{order.barfi_500}}</td>
+                    
+                  </tr>
+                  {% endif %} 
+                  {% if order.mava_mix_mithai_1000 > 0 or order.mava_mix_mithai_500 > 0 %}
+
+                  <tr>
+                    <th>માવા મિક્ષ મીઠાઈ</th>
+                    <td>{{order.mava_mix_mithai_1000}}</td>
+                    <td>{{order.mava_mix_mithai_500}}</td>
+                  
+                  </tr>
+                  {% endif %} 
+                  {% if order.dry_fruite_biscuite_1000 > 0 or order.dry_fruite_biscuite_500 > 0 %}
+
+                  <tr>
+                    <th>ડ્રાય ફ્રુટ બીસ્કીટ</th>
+                    <td>{{order.dry_fruite_biscuite_1000}}</td>
+                    <td>{{order.dry_fruite_biscuite_500}}</td>
+             
+                  </tr>
+                  {% endif %} 
+                  {% if order.surti_chavanu_1000 > 0 or order.surti_chavanu_500 > 0 %}
+
+                  <tr>
+                    <th>સુરતી ચવાણું</th>
+                    <td>{{order.surti_chavanu_1000}}</td>
+                    <td>{{order.surti_chavanu_500}}</td>
+                 
+                  </tr>
+                  {% endif %}
+                  {% if order.son_papdi_1000 > 0 or order.son_papdi_500 > 0 %}
+
+                  <tr>
+                    <th>સોન પાપડી</th>
+                    <td>{{order.son_papdi_1000}}</td>
+                    <td>{{order.son_papdi_500}}</td>
+                    
+                  </tr>
+                  {% endif %}
+                  <!-- Add more rows for other items -->
+                </tbody>
+               
+              <div class="w-100"></div>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -18,6 +18,8 @@ class UserAdminCreationForm(forms.ModelForm):
             "password",
             "name",
             "books",
+            "is_staff",
+            "groups",
         )
 
     def check_fields(self):

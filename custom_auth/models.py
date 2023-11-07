@@ -17,6 +17,7 @@ class CustomUser(AbstractUser):
     is_dealer = models.BooleanField(default=False)
     name = models.CharField(max_length=150, default="")
     books = JSONField(schema=USER_BOOKS, default=[])
+    amount_received = models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return f"{self.username} - {self.name}"

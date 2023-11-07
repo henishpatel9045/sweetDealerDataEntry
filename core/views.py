@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
-from core.constants import BILL_PER_BOOK
+from core.constants import BILL_PER_BOOK, ITEM_NAMES
 
 from export.excel import export_data
 
@@ -203,3 +203,47 @@ def dealer_total_detail(request):
     except Exception as e:
         logger.exception(e)
         return JsonResponse({"detail": "error occurred"})
+    
+
+@login_required
+def dispatch_view(request):
+    try:
+        book = request.GET.get("book", None)
+        bill_number = request.GET.get("bill_number", None)
+        if book:
+            book = int(book)
+            order = Order.objects.prefetch_related("dealer").filter(
+                bill_number__gt=(book-1) * BILL_PER_BOOK,
+                bill_number__lte=book * BILL_PER_BOOK,
+            )
+            book_total_data = {}
+            for item in ITEM_NAMES[1]:
+                book_total_data[item] = sum([getattr(i, item) for i in order])
+
+            return render(
+                request,
+                "order/dispatch.html",
+                {
+                    "book_orders": order,
+                    "book_total_data": book_total_data,
+                    "book": {"number": book, "dealer_name": order[0].dealer.name if order else None},
+                },
+            )
+        elif bill_number:
+            bill_number = int(bill_number)
+            order = Order.objects.prefetch_related("dealer").filter(
+                bill_number=bill_number
+            )
+            return render(
+                request,
+                "order/dispatch.html",
+                {
+                    "book_orders": order,
+                    "book": {"number": bill_number // BILL_PER_BOOK + 1, "dealer_name": order[0].dealer.name if order else None},
+                },
+            )
+        else:
+            return render(request, "order/dispatch.html")
+    except Exception as e:
+        messages.error(request, e.args[0])
+        return render(request, "order/dispatch.html")

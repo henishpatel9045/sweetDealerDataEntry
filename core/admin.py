@@ -21,16 +21,17 @@ admin.site.site_title = "Vadiparti Yuvak Mandal"
 class OrderModelAdmin(admin.ModelAdmin):
     list_display = (
         "bill",
+        "customer",
         "dealer_detail",
         "bill_total",
         "received",
-        "amount_to_collect",
+        # "amount_to_collect",
+        "isDispatched",
     )
     autocomplete_fields = ("dealer",)
     search_fields = (
         "bill_number",
-        "dealer__name",
-        "dealer__username",
+        "customer_name",
     )
     actions = (
         "dispatch_orders",
@@ -104,7 +105,9 @@ class OrderModelAdmin(admin.ModelAdmin):
         return super().get_queryset(request).prefetch_related("dealer")
 
     def get_changelist(self, request, **kwargs):
-        return OrderChangeList
+        if request.user.is_superuser:
+            return OrderChangeList
+        return super().get_changelist(request, **kwargs)
 
     def bill(self, obj):
         if hasattr(obj, "amount_to_collect"):
@@ -112,6 +115,24 @@ class OrderModelAdmin(admin.ModelAdmin):
                 f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;">{obj.bill}</div>'
             )
         return obj.bill_number
+
+    def customer(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;"></div>'
+            )
+        return obj.customer_name
+
+    def isDispatched(self, obj):
+        if hasattr(obj, "amount_to_collect"):
+            return format_html(
+                f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;"></div>'
+            )
+        return format_html(
+            "<img src='/static/admin/img/icon-yes.svg' alt='True'>"
+            if obj.dispatched
+            else "<img src='/static/admin/img/icon-no.svg' alt='False'>"
+        )
 
     def bill_total(self, obj):
         if hasattr(obj, "amount_to_collect"):
@@ -140,6 +161,9 @@ class OrderModelAdmin(admin.ModelAdmin):
                 f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bold;"></div>'
             )
         return f"{obj.dealer.name} - {obj.dealer.username}"
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return super().get_queryset(request).prefetch_related("dealer")
 
 
 class StockAdminInline(admin.TabularInline):
@@ -194,7 +218,7 @@ class ItemModelAdmin(admin.ModelAdmin):
                 f'<div class="custom-row" style="font-size: 1.5rem; font-weight: bolder;">{obj.box_dispatched_500}</div>'
             )
         return obj.box_dispatched_500
-    
+
     def box_1000_ready(self, obj):
         if hasattr(obj, "box_500_gm"):
             return format_html(
@@ -250,3 +274,43 @@ class ItemModelAdmin(admin.ModelAdmin):
         ind = self.get_item_index(obj.name) + 1
         total = sum(i[ind] for i in self.orders)
         return str(total)
+
+
+class DispatchModel(Order):
+    class Meta:
+        proxy = True
+        verbose_name = "Dispatch"
+        verbose_name_plural = "Dispatches"
+
+
+@admin.register(DispatchModel)
+class DispatchModelAdmin(admin.ModelAdmin):
+    list_display = (
+        "bill_number",
+        "customer_name",
+        "dealer_detail",
+        "total_amount",
+        "amount_paid",
+        "amount_to_collect",
+        "amount_received",
+        "dispatched",
+    )
+    search_fields = (
+        "bill_number",
+        "customer_name",
+    )
+    list_filter = (
+        BillBookFilter,
+        DealerFilter,
+        "dispatched",
+    )
+    list_editable = (
+        "amount_received",
+        "dispatched",
+    )
+
+    def dealer_detail(self, obj):
+        return f"{obj.dealer.name} - {obj.dealer.username}"
+
+    def amount_to_collect(self, obj):
+        return obj.total_amount - obj.amount_received

@@ -71,7 +71,7 @@ class OrderChangeList(ChangeList):
         Get the totals
         """
         # basically the total parameter is an empty instance of the given model
-        total = Item()
+        total = Order()
         total.bill = ("Sum " if all else "") + "Total"
         orders = (Order.objects.all() if all else self.queryset).values_list(
             "total_amount", "amount_received"
