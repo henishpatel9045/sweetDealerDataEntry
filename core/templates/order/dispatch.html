@@ -26,8 +26,13 @@
                 </form>
             </div>
         </div>
+        {% if book_total_data %}
+        <div style="width: 100%;" id="data_book_total">
         <h1>Book: #{{book.number}} - {{book.dealer_name}}</h1>
-          <h2>Book Total Data</h2>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 1rem;">
+            <h2>Book Total Data</h2>
+            <button class="btn btn-success" onclick="printData('data_book_total')">Print</button>
+          </div>  
           <div>
               <table class="table table-striped" style="border: 2px solid gray">
                 <thead class="thead-dark">
@@ -129,9 +134,10 @@
             
             </table>
           </div>
+        </div>
+        {% endif %}
 
-
-        <div class="accordion" id="ordersContainer">
+  <div class="accordion" id="ordersContainer">
     {% for order in book_orders %}
     <div class="accordion-item">
       <h2 class="accordion-header">
@@ -152,7 +158,10 @@
         data-bs-parent="#ordersContainer"
       >
         <div class="accordion-body">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 1rem;">
             <h1 style="font-size: 1.5rem">Order #{{ order.bill_number }}</h1>
+            <button class="btn btn-success" onclick="printData('bill_{{order.bill_number}}')">Print</button>
+          </div> 
             <div>
               <div class="row">
                 <div class="col-md-6">
@@ -252,17 +261,30 @@
                   {% endif %}
                   <!-- Add more rows for other items -->
                 </tbody>
-               
-              <div class="w-100"></div>
+                </table>
             </div>
-            
         </div>
-    </div>
+      </div>
     </div>
     {% endfor %}
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script>
+  const printData = (id) => {
+    let data = document.getElementById(id).outerHTML
+    let currData = document.body.innerHTML
+
+    let newDiv = document.createElement("div")
+    newDiv.style.width = "100%"
+    newDiv.style.borderBottom = "1px solid gray"
+    newDiv.style.padding = "0 1rem"
+    document.body.innerHTML = data + "<div style='width: 100%; border-top: 1px solid gray; margin: 1rem 0rem;'></div>" + data
+    window.print()
+    document.body.innerHTML = currData
+  }
+</script>
 
 </body>
 </html>
