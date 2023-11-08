@@ -22,13 +22,14 @@ class UserAdmin(BaseUserAdmin):
         "total_orders",
         "total_amount",
         "amount_received",
+        "amount_to_collect",
     )
     list_filter = ()
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
             "Personal info",
-            {"fields": ("name", "books", "is_dealer")},
+            {"fields": ("name", "amount_received", "books", "is_dealer")},
         ),
         (
             "Permissions",
@@ -70,6 +71,9 @@ class UserAdmin(BaseUserAdmin):
             .values_list("dealer", "total_amount", "amount_paid")
         )
         return super().changelist_view(request)
+
+    def amount_to_collect(self, obj):
+        return str(int(self.total_amount(obj).split()[0]) - obj.amount_received) + " ₹"
 
     def bill_books(self, obj):
         res = ""
