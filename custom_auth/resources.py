@@ -64,17 +64,17 @@ class CustomUserResource(resources.ModelResource):
         return "\n".join([str(book) for book in user.books])
 
     def dehydrate_total_amount(self, user):
-        return str(user.total_amount) + " ₹"
+        return user.total_amount
 
     def dehydrate_site_total_amount(self, user):
         total = sum(map(lambda x: x[1], filter(lambda x: x[0] == user.pk, self.orders)))
-        return str(total) + " ₹"
+        return total
 
     def dehydrate_amount_received(self, user):
         total = sum(
             map(lambda x: x[1], filter(lambda x: x[0] == user.pk, self.transactions))
         )
-        return str(total) + " ₹"
+        return total
 
     def dehydrate_total_orders(self, user):
         total = len(list(filter(lambda x: x[0] == user.pk, self.orders)))
@@ -85,4 +85,4 @@ class CustomUserResource(resources.ModelResource):
         received = sum(
             map(lambda x: x[1], filter(lambda x: x[0] == user.pk, self.transactions))
         )
-        return str(total - received) + " ₹"
+        return total - received
