@@ -4,3 +4,4 @@ xlsxwriter
 django-admin-shortcuts
 django-debug-toolbar
 django-jsonform
+django-import-export

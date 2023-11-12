@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "rest_framework",
+    'import_export',
     "django_jsonform",
     "custom_auth",
     "core",

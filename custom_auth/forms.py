@@ -89,7 +89,7 @@ class UserAdminChangeForm(forms.ModelForm):
             "username",
             "password",
             "name",
-            "amount_received",
+            # "amount_received",
             "books",
             "is_dealer",
             "is_staff",

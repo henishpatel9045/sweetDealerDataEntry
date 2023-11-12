@@ -5,14 +5,23 @@ from django.utils.html import format_html
 from core.constants import BILL_PER_BOOK
 from core.models import Order
 from django.utils.html import format_html
-from custom_auth.models import CustomUser as User
+from import_export.admin import ImportExportModelAdmin
 
+from .resources import CustomUserResource
+from custom_auth.models import CustomUser as User, UserDeposit
 from .forms import UserAdminChangeForm, UserAdminCreationForm
 
 
-class UserAdmin(BaseUserAdmin):
+class UserDepositInline(admin.TabularInline):
+    model = UserDeposit
+    extra = 0
+
+
+class UserAdmin(BaseUserAdmin, ImportExportModelAdmin):
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
+    resource_classes = [CustomUserResource]
+    inlines = [UserDepositInline]
 
     list_display = (
         "username",
@@ -20,6 +29,7 @@ class UserAdmin(BaseUserAdmin):
         "bill_books",
         "bill_range",
         "total_orders",
+        "total_bill_amount",
         "total_amount",
         "amount_received",
         "amount_to_collect",
@@ -29,7 +39,16 @@ class UserAdmin(BaseUserAdmin):
         (None, {"fields": ("username", "password")}),
         (
             "Personal info",
-            {"fields": ("name", "amount_received", "books", "is_dealer")},
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "name",
+                    "total_amount",
+                    # "amount_received",
+                    "books",
+                    "is_dealer",
+                ),
+            },
         ),
         (
             "Permissions",
@@ -70,10 +89,23 @@ class UserAdmin(BaseUserAdmin):
             .prefetch_related("dealer")
             .values_list("dealer", "total_amount", "amount_paid")
         )
+        self.transactions = UserDeposit.objects.all().values_list("user", "amount")
         return super().changelist_view(request)
 
     def amount_to_collect(self, obj):
-        return str(int(self.total_amount(obj).split()[0]) - obj.amount_received) + " ₹"
+        return (
+            str(
+                int(obj.total_amount)
+                - int(self.amount_received(obj).split()[0])
+            )
+            + " ₹"
+        )
+
+    def amount_received(self, obj):
+        total = sum(
+            map(lambda x: x[1], filter(lambda x: x[0] == obj.pk, self.transactions))
+        )
+        return str(total) + " ₹"
 
     def bill_books(self, obj):
         res = ""
@@ -94,7 +126,7 @@ class UserAdmin(BaseUserAdmin):
         total = len(list(filter(lambda x: x[0] == obj.pk, self.orders)))
         return total
 
-    def total_amount(self, obj):
+    def total_bill_amount(self, obj):
         total = sum(map(lambda x: x[1], filter(lambda x: x[0] == obj.pk, self.orders)))
         return str(total) + " ₹"
 
