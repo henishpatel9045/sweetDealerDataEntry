@@ -26,6 +26,7 @@ class CustomUser(AbstractUser):
 class UserDeposit(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     amount = models.IntegerField(default=0)
+    description = models.TextField(null=True, blank=True)
     date = models.DateField(default=timezone.now)
 
     def __str__(self) -> str:
